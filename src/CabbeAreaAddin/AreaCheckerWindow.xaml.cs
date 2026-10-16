@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Microsoft.Win32;
+using MediaColor = System.Windows.Media.Color;
 
 namespace CabbeAreaAddin
 {
@@ -44,25 +45,25 @@ namespace CabbeAreaAddin
             // Status Banner
             if (_currentResult.IsApproved)
             {
-                StatusBanner.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ECFDF5"));
-                StatusBanner.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A7F3D0"));
+                StatusBanner.Background = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#ECFDF5"));
+                StatusBanner.BorderBrush = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#A7F3D0"));
                 TxtStatusIcon.Text = "✓";
-                TxtStatusIcon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#059669"));
+                TxtStatusIcon.Foreground = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#059669"));
                 TxtStatusTitle.Text = "STATUS: GODKÄND";
-                TxtStatusTitle.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#065F46"));
+                TxtStatusTitle.Foreground = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#065F46"));
                 TxtStatusDesc.Text = $"Modellen innehåller {_currentResult.PlacedBtaCount} st utplacerade BTA-areor (Totalt: {_currentResult.TotalBtaSqm:N1} m²).";
-                TxtStatusDesc.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#047857"));
+                TxtStatusDesc.Foreground = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#047857"));
             }
             else
             {
-                StatusBanner.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEF2F2"));
-                StatusBanner.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FECACA"));
+                StatusBanner.Background = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#FEF2F2"));
+                StatusBanner.BorderBrush = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#FECACA"));
                 TxtStatusIcon.Text = "✗";
-                TxtStatusIcon.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#DC2626"));
+                TxtStatusIcon.Foreground = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#DC2626"));
                 TxtStatusTitle.Text = "STATUS: UNDERKÄND";
-                TxtStatusTitle.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#991B1B"));
+                TxtStatusTitle.Foreground = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#991B1B"));
                 TxtStatusDesc.Text = "Modellen saknar utplacerade BTA-areor (Obligatoriskt krav)! Skapa och placera BTA i modellen.";
-                TxtStatusDesc.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B91C1C"));
+                TxtStatusDesc.Foreground = new SolidColorBrush((MediaColor)ColorConverter.ConvertFromString("#B91C1C"));
             }
 
             GridSummary.ItemsSource = _currentResult.Summaries;
