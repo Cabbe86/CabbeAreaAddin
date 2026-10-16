@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Cabbe Areakontroll</Name>
+    <Assembly>CabbeAreaAddin.dll</Assembly>
+    <AddInId>8B95E364-5A69-4282-9694-82D7CFB22055</AddInId>
+    <FullClassName>CabbeAreaAddin.App</FullClassName>
+    <VendorId>SE.CABBE</VendorId>
+    <VendorDescription>Cabbe BIM - Kvalitetskontroll av areor för Revit</VendorDescription>
+  </AddIn>
+</RevitAddIns>
