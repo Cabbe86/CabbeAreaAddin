@@ -1,0 +1,146 @@
+<Window x:Class="CabbeAreaAddin.AreaCheckerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cabbe Areakontroll - Revit" Height="750" Width="980"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8FAFC"
+        FontFamily="Segoe UI">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Header -->
+            <RowDefinition Height="Auto"/> <!-- Status Banner -->
+            <RowDefinition Height="Auto"/> <!-- Summary Cards -->
+            <RowDefinition Height="*"/>    <!-- DataGrids / Tabs -->
+            <RowDefinition Height="Auto"/> <!-- Footer -->
+        </Grid.RowDefinitions>
+
+        <!-- 1. Header -->
+        <Border Grid.Row="0" Background="#0F172A" Padding="20,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="CABBE BIM • AREAKONTROLL" Foreground="#38BDF8" FontWeight="Bold" FontSize="11" Margin="0,0,0,2"/>
+                    <TextBlock Text="Kvalitetsgranskning av Areamodellering" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="Automatisk kontroll av BTA (krav) och övriga areatyper enligt svensk standard SS 21054." Foreground="#94A3B8" FontSize="12" Margin="0,2,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="🔄 Kör ny analys" Click="BtnRefresh_Click"
+                        Background="#2563EB" Foreground="White" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- 2. Status Banner -->
+        <Border x:Name="StatusBanner" Grid.Row="1" Margin="20,16,20,0" CornerRadius="8" Padding="16" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TxtStatusIcon" Text="✓" FontSize="32" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtStatusTitle" Text="STATUS: GODKÄND" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtStatusDesc" Text="Modellen innehåller godkända BTA-areor." FontSize="13" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 3. Summary Overview Table -->
+        <Border Grid.Row="2" Margin="20,16,20,0" Background="White" CornerRadius="8" BorderBrush="#E2E8F0" BorderThickness="1" Padding="16">
+            <StackPanel>
+                <TextBlock Text="Sammanfattning Areatyper" FontWeight="Bold" FontSize="14" Foreground="#1E293B" Margin="0,0,0,10"/>
+                <DataGrid x:Name="GridSummary" AutoGenerateColumns="False" IsReadOnly="True"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          Background="Transparent" BorderThickness="0" RowHeight="32">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Kod" Binding="{Binding TypeCode}" FontWeight="Bold" Width="80"/>
+                        <DataGridTextColumn Header="Beskrivning" Binding="{Binding Description}" Width="2*"/>
+                        <DataGridTemplateColumn Header="Status" Width="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusColor}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Antal placerade" Binding="{Binding PlacedCount}" Width="110"/>
+                        <DataGridTextColumn Header="Outplacerade" Binding="{Binding UnplacedCount}" Width="100"/>
+                        <DataGridTextColumn Header="Total area" Binding="{Binding DisplayArea}" FontWeight="SemiBold" Width="120"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+
+        <!-- 4. Tabs: Placerade areor / Outplacerade areor -->
+        <TabControl Grid.Row="3" Margin="20,16,20,0" Background="White" BorderBrush="#E2E8F0">
+            <!-- TAB 1: Placerade Areor -->
+            <TabItem Header="Placerade Areor">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Klicka på en rad för att zooma in och markera arean i Revit:" Foreground="#64748B" FontSize="12" Margin="0,0,0,8"/>
+                    <DataGrid x:Name="GridPlaced" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+                              HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                              SelectionMode="Single" SelectionChanged="GridPlaced_SelectionChanged"
+                              Background="Transparent" BorderThickness="0" RowHeight="32">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Element ID" Binding="{Binding IdValue}" Width="100"/>
+                            <DataGridTextColumn Header="Typ" Binding="{Binding AreaType}" FontWeight="Bold" Width="70"/>
+                            <DataGridTextColumn Header="Namn" Binding="{Binding Name}" Width="1.5*"/>
+                            <DataGridTextColumn Header="Area Scheme" Binding="{Binding AreaScheme}" Width="1.5*"/>
+                            <DataGridTextColumn Header="Plan (Level)" Binding="{Binding LevelName}" Width="120"/>
+                            <DataGridTextColumn Header="Area (m²)" Binding="{Binding AreaSqm, StringFormat={}{0:N1} m²}" FontWeight="SemiBold" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: Outplacerade Areor -->
+            <TabItem x:Name="TabUnplaced" Header="Outplacerade Areor (0)">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Areor som finns definierade i databasen men saknar fysisk placering/gräns:" Foreground="#DC2626" FontSize="12" Margin="0,0,0,8"/>
+                    <DataGrid x:Name="GridUnplaced" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+                              HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                              Background="Transparent" BorderThickness="0" RowHeight="32">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Element ID" Binding="{Binding IdValue}" Width="110"/>
+                            <DataGridTextColumn Header="Typ" Binding="{Binding AreaType}" FontWeight="Bold" Width="80"/>
+                            <DataGridTextColumn Header="Namn" Binding="{Binding Name}" Width="2*"/>
+                            <DataGridTextColumn Header="Area Scheme" Binding="{Binding AreaScheme}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- 5. Footer -->
+        <Border Grid.Row="4" Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="20,12">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="📊 Exportera till CSV" Click="BtnExportCsv_Click"
+                            Background="#0EA5E9" Foreground="White" Margin="0,0,10,0"/>
+                    <Button Content="🔍 Markera vald area i Revit" Click="BtnZoomSelected_Click"
+                            Background="#64748B" Foreground="White"/>
+                </StackPanel>
+                <Button Content="Stäng" Click="BtnClose_Click" HorizontalAlignment="Right"
+                        Background="#CBD5E1" Foreground="#1E293B"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
